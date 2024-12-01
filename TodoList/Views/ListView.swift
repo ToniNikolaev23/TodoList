@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct ListView: View {
-    @State var items: [ItemModel] = [
-        ItemModel(title: "First title", isCompleted: false),
-        ItemModel(title: "Second title", isCompleted: true),
-        ItemModel(title: "Third title", isCompleted: false)
-    ]
+    @EnvironmentObject var listViewModel: ListViewModel
+ 
     var body: some View {
         List {
-            ForEach(items) { item in
+            ForEach(listViewModel.items) { item in
                 ListRowView(item: item)
+                    .onTapGesture {
+                        withAnimation(.linear) {
+                            listViewModel.updateItem(item: item)
+                        }
+                    }
             }
+            .onDelete(perform: listViewModel.deleteItem)
+            .onMove(perform: listViewModel.moveItem)
             
            
         }
@@ -43,6 +47,7 @@ struct ListView: View {
     NavigationStack {
         ListView()
     }
+    .environmentObject(ListViewModel())
 }
 
 
